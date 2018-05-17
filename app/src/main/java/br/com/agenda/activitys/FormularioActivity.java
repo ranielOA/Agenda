@@ -1,10 +1,11 @@
 package br.com.agenda.activitys;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,10 @@ import br.com.agenda.BuildConfig;
 import br.com.agenda.R;
 import br.com.agenda.dao.AlunoDAO;
 import br.com.agenda.modelo.Aluno;
-import br.com.agenda.tasks.InsereAlunoTask;
+import br.com.agenda.retrofit.RetrofitInicializador;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FormularioActivity extends AppCompatActivity {
     EditText nome, endereco, telefone, site;
@@ -100,7 +104,21 @@ public class FormularioActivity extends AppCompatActivity {
 
                 dao.close();
 
-                new InsereAlunoTask(aluno).execute();
+                //new InsereAlunoTask(aluno).execute();
+
+                Call<Void> call = new RetrofitInicializador().getAlunoService().insere(aluno);
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Log.i("onResponse", "requisicao com sucesso");
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("onFailure", "requisicao falhou");
+                    }
+                });
 
                 Toast.makeText(FormularioActivity.this, "Aluno " + aluno.getNome() + " salvo!", Toast.LENGTH_SHORT).show();
 
