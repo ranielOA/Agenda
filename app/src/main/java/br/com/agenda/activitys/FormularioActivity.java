@@ -104,18 +104,17 @@ public class FormularioActivity extends AppCompatActivity {
 
                 dao.close();
 
-                //new InsereAlunoTask(aluno).execute();
+                Call<Void> call = new RetrofitInicializador().getAlunoService().insere(aluno);          //requisição web para cadastro de aluno utilizando o Retrofit(<Void> é o tipo de resposta
+                                                                                                        //que irá receber do servidor, nesse caso vazio)
 
-                Call<Void> call = new RetrofitInicializador().getAlunoService().insere(aluno);
-
-                call.enqueue(new Callback<Void>() {
+                call.enqueue(new Callback<Void>() {                                                     //utilizando enqueue() porque ele é assíncrono enquanto execute() é síncrono
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(Call<Void> call, Response<Void> response) {                  //pegando resposta no caso de sucesso
                         Log.i("onResponse", "requisicao com sucesso");
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(Call<Void> call, Throwable t) {                               //pegando resposta no caso de falha
                         Log.e("onFailure", "requisicao falhou");
                     }
                 });

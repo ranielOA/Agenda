@@ -11,11 +11,6 @@ public class WebClient {
         return realizaRequisicao(json, endereco);
     }
 
-    public void insere(String json) {
-        String endereco = "http://192.168.0.14:8080/api/aluno";
-        realizaRequisicao(json, endereco);
-    }
-
     private String realizaRequisicao(String json, String endereco) {
         try {
             URL url = new URL(endereco);
