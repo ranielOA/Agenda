@@ -50,7 +50,8 @@ public class AlunoDAO extends SQLiteOpenHelper{
         dados.put("caminhoFoto", aluno.getCaminhoFoto());
         dados.put("nota", aluno.getNota());
 
-        db.insert("Alunos", null, dados);
+        long id = db.insert("Alunos", null, dados);
+        aluno.setId(id);
     }
 
     public List<Aluno> buscaAlunos(){
