@@ -12,7 +12,7 @@ public class WebClient {
     }
 
     public void insere(String json) {
-        String endereco = "192.168.0.14:8080/api/aluno";
+        String endereco = "http://192.168.0.14:8080/api/aluno";
         realizaRequisicao(json, endereco);
     }
 
