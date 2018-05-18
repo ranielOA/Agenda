@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.agenda.dto.AlunoSync;
 import br.com.agenda.modelo.Aluno;
 
 public class AlunoDAO extends SQLiteOpenHelper{
@@ -76,22 +77,28 @@ public class AlunoDAO extends SQLiteOpenHelper{
         }
     }
 
-    private String geraUUID() {
-        return UUID.randomUUID().toString();
-    }
-
     public void insere(Aluno aluno){
         SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues dados = new ContentValues();
-        dados.put("nome", aluno.getNome());
-        dados.put("endereco", aluno.getEndereco());
-        dados.put("telefone", aluno.getTelefone());
-        dados.put("site", aluno.getSite());
-        dados.put("caminhoFoto", aluno.getCaminhoFoto());
-        dados.put("nota", aluno.getNota());
+        insereIdSeNecessario(aluno);
+        ContentValues dados = pegaDadosDoAluno(aluno);
 
         long id = db.insert("Alunos", null, dados);
+    }
+
+    public void deleta(Aluno aluno){
+        SQLiteDatabase db = getWritableDatabase();
+        String[] params = {aluno.getId().toString()};
+
+        db.delete("Alunos", "id = ?", params);
+    }
+
+    public void altera(Aluno aluno){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues dados = pegaDadosDoAluno(aluno);
+
+        String[] params = {aluno.getId().toString()};
+        db.update("Alunos", dados, "id = ?", params);
     }
 
     public List<Aluno> buscaAlunos(){
@@ -101,6 +108,23 @@ public class AlunoDAO extends SQLiteOpenHelper{
         List<Aluno> alunos = populaAlunos(c);
 
         return alunos;
+    }
+
+    private String geraUUID() {
+        return UUID.randomUUID().toString();
+    }
+
+    @NonNull
+    private ContentValues pegaDadosDoAluno(Aluno aluno) {
+        ContentValues dados = new ContentValues();
+        dados.put("id", aluno.getId());
+        dados.put("nome", aluno.getNome());
+        dados.put("endereco", aluno.getEndereco());
+        dados.put("telefone", aluno.getTelefone());
+        dados.put("site", aluno.getSite());
+        dados.put("nota", aluno.getNota());
+        dados.put("caminhoFoto", aluno.getCaminhoFoto());
+        return dados;
     }
 
     @NonNull
@@ -125,28 +149,6 @@ public class AlunoDAO extends SQLiteOpenHelper{
         return alunos;
     }
 
-    public void deleta(Aluno aluno){
-        SQLiteDatabase db = getWritableDatabase();
-        String[] params = {aluno.getId().toString()};
-
-        db.delete("Alunos", "id = ?", params);
-    }
-
-    public void altera(Aluno aluno){
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues dados = new ContentValues();
-        dados.put("nome", aluno.getNome());
-        dados.put("endereco", aluno.getEndereco());
-        dados.put("telefone", aluno.getTelefone());
-        dados.put("site", aluno.getSite());
-        dados.put("caminhoFoto", aluno.getCaminhoFoto());
-        dados.put("nota", aluno.getNota());
-
-        String[] params = {aluno.getId().toString()};
-        db.update("Alunos", dados, "id = ?", params);
-    }
-
     public boolean isAluno(String telefone){
         String sql = "SELECT * FROM Alunos WHERE telefone = ?";
         Cursor cursor = getReadableDatabase().rawQuery(sql, new String[]{telefone});
@@ -156,5 +158,29 @@ public class AlunoDAO extends SQLiteOpenHelper{
         return count > 0;
     }
 
+    public void sincroniza(List<Aluno> alunos) {
+        for (Aluno aluno :
+                alunos) {
+            if (existe(aluno)){
+                altera(aluno);
+            } else{
+                insere(aluno);
+            }
+        }
+    }
 
+    private boolean existe(Aluno aluno) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT * FROM Alunos WHERE id=? LIMIT 1";
+        Cursor cursor = db.rawQuery(sql, new String[]{aluno.getId()});
+        int quantidade = cursor.getCount();
+        cursor.close();
+
+        return quantidade > 0;
+    }
+
+    private void insereIdSeNecessario(Aluno aluno) {
+        if(aluno.getId() == null)
+            aluno.setId(geraUUID());
+    }
 }
