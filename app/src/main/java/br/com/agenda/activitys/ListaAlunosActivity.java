@@ -42,14 +42,14 @@ public class ListaAlunosActivity extends AppCompatActivity {
     ListView listaAlunos;
     Button novoAluno;
     SwipeRefreshLayout swipe;
+    EventBus eventBus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_alunos);
 
-        EventBus eventBus = EventBus.getDefault();
-        eventBus.register(this);
+        eventBus = EventBus.getDefault();
 
         if (ActivityCompat.checkSelfPermission(ListaAlunosActivity.this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ListaAlunosActivity.this, new String[]{Manifest.permission.RECEIVE_SMS}, 124);
@@ -100,7 +100,16 @@ public class ListaAlunosActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        eventBus.register(this);
+
         carregaLista();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        eventBus.unregister(this);
     }
 
     private void buscaAlunos() {
