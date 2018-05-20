@@ -1,6 +1,7 @@
 package br.com.agenda.retrofit;
 
 import br.com.agenda.service.AlunoService;
+import br.com.agenda.service.DispositivoService;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -26,5 +27,9 @@ public class RetrofitInicializador {
 
     public AlunoService getAlunoService() {
         return retrofit.create(AlunoService.class);
+    }
+
+    public DispositivoService getDispositivoService(String token) {
+        return retrofit.create(DispositivoService.class);
     }
 }

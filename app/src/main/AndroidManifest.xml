@@ -62,6 +62,19 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name="br.com.agenda.activitys.MapaAlunosActivity"></activity>
+
+        <service
+            android:name=".firebase.AgendaInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".firebase.AgendaMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
