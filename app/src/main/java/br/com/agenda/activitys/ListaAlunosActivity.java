@@ -63,7 +63,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                alunoSincronizador.buscaAlunos();
+                alunoSincronizador.buscaTodos();
             }
         });
 
@@ -89,7 +89,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        alunoSincronizador.buscaAlunos();
+        alunoSincronizador.buscaTodos();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
