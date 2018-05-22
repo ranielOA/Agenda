@@ -32,5 +32,5 @@ public interface AlunoService {
     Call<AlunoSync> atualiza(@Body List<Aluno> alunos); //envia lista de alunos que precisa ser atualizada no servidor e retorna a lista com os que foram atualizados
                                                         //com sucesso, para então atualizar estes alunos no aplicativo tbm
 
-    //swipe.setOnRefreshListener - neste refresh na classe ListaAlunosActivity faz a sincronização de aplicativo e servidor
+    //swipe.setOnRefreshListener - neste refresh na classe ListaAlunosActivity faz a sincronização de aplicativo e servidor e no fim do onCreate() tbm
 }

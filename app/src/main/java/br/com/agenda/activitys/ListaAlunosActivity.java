@@ -60,7 +60,6 @@ public class ListaAlunosActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {                       //neste momento tanto envia alunos para atualizar no servidor como pega as atualizações do servidor para por no aplicativo
                 alunoSincronizador.buscaTodos();
-                alunoSincronizador.sincronizaAlunosInternos();
             }
         });
 
@@ -87,10 +86,9 @@ public class ListaAlunosActivity extends AppCompatActivity {
             }
         });
         alunoSincronizador.buscaTodos();
-        alunoSincronizador.sincronizaAlunosInternos();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN) //recebe evento do eventBus aqui, tbm esta indicando que a Thread que vai ser utilizada é a Main, pois só ela pode fazer alteração na listView
     public void atualizaListaAlunoEvent(AtualizaListaAlunoEvent event){
         if(swipe.isRefreshing())
             swipe.setRefreshing(false);

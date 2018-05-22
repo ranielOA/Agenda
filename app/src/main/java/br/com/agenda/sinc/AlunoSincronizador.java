@@ -50,7 +50,7 @@ public class AlunoSincronizador {
         call.enqueue(buscaAlunoCallback());
     }
 
-    public void sincronizaAlunosInternos(){
+    private void sincronizaAlunosInternos(){
         final AlunoDAO dao = new AlunoDAO(context);
         List<Aluno> alunos = dao.listaNaoSincronizado();
 
@@ -87,6 +87,12 @@ public class AlunoSincronizador {
                 Log.i("versao", preferences.getVersao());
 
                 eventbus.post(new AtualizaListaAlunoEvent());
+
+                sincronizaAlunosInternos();                     //com esse metodo colocado aqui ao invés de dentro da classe ListaAlunosActivity(por ex. dentro do swipe.setOnRefreshListener)
+                                                                //a prioridade dos dados esta sendo dada ao servidor, então primeiro se pega as informações do servidor e depois envia
+                                                                //as do aplicativo. Pórem graças a capacidade do servidor de enviar os alunos novos(na call novos() do AlunoService) é
+                                                                //que é possivel fazer este merge, pois ele busca apenas as novas informações do servidor, de outra forma se buscar todas
+                                                                //as informações, tudo do aplicativo será substituido pelo o que esta no servidor.
             }
 
             @Override
