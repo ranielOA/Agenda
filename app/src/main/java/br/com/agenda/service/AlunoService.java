@@ -25,8 +25,12 @@ public interface AlunoService {
     Call<Void> deleta(@Path("id") String id);
 
     @GET("aluno/diff")
-    Call<AlunoSync> novos(@Header("datahora") String versao);
+    Call<AlunoSync> novos(@Header("datahora") String versao); //busca somente alunos novos, ou seja, alunos que ja estao presentes no app antes de determinada versão do servidor
+                                                              //não serão buscados, só os alunos que foram adicionados depois de determinada versão
 
     @PUT("aluno/lista")
-    Call<AlunoSync> atualiza(@Body List<Aluno> alunos);
+    Call<AlunoSync> atualiza(@Body List<Aluno> alunos); //envia lista de alunos que precisa ser atualizada no servidor e retorna a lista com os que foram atualizados
+                                                        //com sucesso, para então atualizar estes alunos no aplicativo tbm
+
+    //swipe.setOnRefreshListener - neste refresh na classe ListaAlunosActivity faz a sincronização de aplicativo e servidor
 }

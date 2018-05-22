@@ -58,7 +58,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh() {
+            public void onRefresh() {                       //neste momento tanto envia alunos para atualizar no servidor como pega as atualizações do servidor para por no aplicativo
                 alunoSincronizador.buscaTodos();
                 alunoSincronizador.sincronizaAlunosInternos();
             }

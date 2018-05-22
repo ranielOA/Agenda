@@ -97,12 +97,15 @@ public class AlunoSincronizador {
         };
     }
 
-    public void deleta(Aluno aluno) {
+    public void deleta(final Aluno aluno) {
         Call<Void> call = new RetrofitInicializador().getAlunoService().deleta(aluno.getId());
 
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                AlunoDAO alunoDAO = new AlunoDAO(context);
+                alunoDAO.deleta(aluno);
+                alunoDAO.close();
 
             }
 
