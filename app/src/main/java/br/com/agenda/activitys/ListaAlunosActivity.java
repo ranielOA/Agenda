@@ -27,16 +27,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import br.com.agenda.event.AtualizaListaAlunoEvent;
-import br.com.agenda.retrofit.RetrofitInicializador;
 import br.com.agenda.sinc.AlunoSincronizador;
 import br.com.agenda.webclient.EnviaDadosServidor;
 import br.com.agenda.R;
 import br.com.agenda.adapter.AlunosAdapter;
 import br.com.agenda.dao.AlunoDAO;
 import br.com.agenda.modelo.Aluno;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ListaAlunosActivity extends AppCompatActivity {
     private final AlunoSincronizador alunoSincronizador = new AlunoSincronizador(this);
@@ -198,23 +194,13 @@ public class ListaAlunosActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                Call<Void> call = new RetrofitInicializador().getAlunoService().deleta(aluno.getId());
+                AlunoDAO dao = new AlunoDAO(ListaAlunosActivity.this);
+                dao.deleta( aluno);
+                dao.close();
 
-                call.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        AlunoDAO dao = new AlunoDAO(ListaAlunosActivity.this);
-                        dao.deleta( aluno);
-                        dao.close();
+                carregaLista();
 
-                        carregaLista();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(ListaAlunosActivity.this, "Não foi possível remover o aluno", Toast.LENGTH_SHORT);
-                    }
-                });
+                alunoSincronizador.deleta(aluno);
 
                 return false;
             }

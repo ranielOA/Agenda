@@ -3,6 +3,7 @@ package br.com.agenda.sinc;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -94,5 +95,21 @@ public class AlunoSincronizador {
                 eventbus.post(new AtualizaListaAlunoEvent());
             }
         };
+    }
+
+    public void deleta(Aluno aluno) {
+        Call<Void> call = new RetrofitInicializador().getAlunoService().deleta(aluno.getId());
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
     }
 }
