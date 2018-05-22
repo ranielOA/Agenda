@@ -64,6 +64,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 alunoSincronizador.buscaTodos();
+                alunoSincronizador.sincronizaAlunosInternos();
             }
         });
 
@@ -90,6 +91,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
             }
         });
         alunoSincronizador.buscaTodos();
+        alunoSincronizador.sincronizaAlunosInternos();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -225,7 +227,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         for (Aluno aluno:
              alunos) {
-            Log.i("id do aluno", String.valueOf(aluno.getId()));
+            //Log.i("id do aluno", String.valueOf(aluno.getId()));
+            Log.i("aluno sincronizado", String.valueOf(aluno.getSincronizado()));
         }
 
         dao.close();

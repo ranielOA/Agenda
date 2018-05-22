@@ -15,6 +15,7 @@ public class Aluno implements Serializable{
     private Double nota;
     private String caminhoFoto;
     private int desativado;
+    private int sincronizado;
 
 
     public String getId() {
@@ -88,5 +89,21 @@ public class Aluno implements Serializable{
 
     public boolean estaDesativado() {
         return desativado == 1;
+    }
+
+    public int getSincronizado() {
+        return sincronizado;
+    }
+
+    public void setSincronizado(int sincronizado) {
+        this.sincronizado = sincronizado;
+    }
+
+    public void sincroniza() {
+        this.sincronizado = 1;
+    }
+
+    public void desincroniza() {
+        this.sincronizado = 0;
     }
 }

@@ -94,6 +94,8 @@ public class FormularioActivity extends AppCompatActivity {
             case R.id.menu_formulario_ok:
                 Aluno aluno = formularioHelper.pegaAluno();
 
+                aluno.desincroniza();
+
                 // Aqui instanciamos o DAO e inserimos o novo aluno no banco
                 AlunoDAO dao = new AlunoDAO(this);
 

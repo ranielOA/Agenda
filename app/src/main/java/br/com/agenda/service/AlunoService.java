@@ -1,5 +1,7 @@
 package br.com.agenda.service;
 
+import java.util.List;
+
 import br.com.agenda.dto.AlunoSync;
 import br.com.agenda.modelo.Aluno;
 import retrofit2.Call;
@@ -8,6 +10,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface AlunoService {
@@ -24,4 +27,6 @@ public interface AlunoService {
     @GET("aluno/diff")
     Call<AlunoSync> novos(@Header("datahora") String versao);
 
+    @PUT("aluno/lista")
+    Call<AlunoSync> atualiza(@Body List<Aluno> alunos);
 }
