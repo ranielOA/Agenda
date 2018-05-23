@@ -14,6 +14,7 @@ import java.util.Map;
 import br.com.agenda.dao.AlunoDAO;
 import br.com.agenda.dto.AlunoSync;
 import br.com.agenda.event.AtualizaListaAlunoEvent;
+import br.com.agenda.sinc.AlunoSincronizador;
 
 public class AgendaMessagingService extends FirebaseMessagingService {
     @Override
@@ -34,9 +35,8 @@ public class AgendaMessagingService extends FirebaseMessagingService {
             ObjectMapper mapper = new ObjectMapper();
             try {
                 AlunoSync alunoSync = mapper.readValue(json, AlunoSync.class);
-                AlunoDAO alunoDAO = new AlunoDAO(this);
-                alunoDAO.sincroniza(alunoSync.getAlunos());
-                alunoDAO.close();
+
+                new AlunoSincronizador(this).sincroniza(alunoSync);
 
                 EventBus eventbus = EventBus.getDefault();
                 eventbus.post(new AtualizaListaAlunoEvent());

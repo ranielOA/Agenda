@@ -7,6 +7,9 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import br.com.agenda.activitys.ListaAlunosActivity;
@@ -54,13 +57,14 @@ public class AlunoSincronizador {
         final AlunoDAO dao = new AlunoDAO(context);
         List<Aluno> alunos = dao.listaNaoSincronizado();
 
+        dao.close();
+
         Call<AlunoSync> call = new RetrofitInicializador().getAlunoService().atualiza(alunos);
         call.enqueue(new Callback<AlunoSync>() {
             @Override
             public void onResponse(Call<AlunoSync> call, Response<AlunoSync> response) {
                 AlunoSync alunoSync = response.body();
-                dao.sincroniza(alunoSync.getAlunos());
-                dao.close();
+                sincroniza(alunoSync);
             }
 
             @Override
@@ -76,15 +80,7 @@ public class AlunoSincronizador {
             @Override
             public void onResponse(Call<AlunoSync> call, Response<AlunoSync> response) {
                 AlunoSync alunoSync = response.body();
-                String versao = alunoSync.getMomentoDaUltimaModificacao();
-
-                preferences.salvaVersao(versao);
-
-                AlunoDAO alunoDAO = new AlunoDAO(context);
-                alunoDAO.sincroniza(alunoSync.getAlunos());
-                alunoDAO.close();
-
-                Log.i("versao", preferences.getVersao());
+                sincroniza(alunoSync);
 
                 eventbus.post(new AtualizaListaAlunoEvent());
 
@@ -93,6 +89,7 @@ public class AlunoSincronizador {
                                                                 //as do aplicativo. Pórem graças a capacidade do servidor de enviar os alunos novos(na call novos() do AlunoService) é
                                                                 //que é possivel fazer este merge, pois ele busca apenas as novas informações do servidor, de outra forma se buscar todas
                                                                 //as informações, tudo do aplicativo será substituido pelo o que esta no servidor.
+                Log.i("versao", preferences.getVersao());
             }
 
             @Override
@@ -101,6 +98,44 @@ public class AlunoSincronizador {
                 eventbus.post(new AtualizaListaAlunoEvent());
             }
         };
+    }
+
+    public void sincroniza(AlunoSync alunoSync) {
+        String versao = alunoSync.getMomentoDaUltimaModificacao();
+
+        Log.i("versao externa", versao);
+
+        if(temVersaoNova(versao)) {
+
+            preferences.salvaVersao(versao);
+
+            Log.i("versao atual", preferences.getVersao());
+
+            AlunoDAO alunoDAO = new AlunoDAO(context);
+            alunoDAO.sincroniza(alunoSync.getAlunos());
+            alunoDAO.close();
+        }
+    }
+
+    private boolean temVersaoNova(String versao) {
+        if(!preferences.temVersao())
+            return true;
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        try {
+            Date dataExterna = format.parse(versao);
+            String versaoInterna = preferences.getVersao();
+
+            Log.i("versao interna", versaoInterna);
+
+            Date dataInterna = format.parse(versaoInterna);
+            return dataExterna.after(dataInterna);          //se data externa for maior retorna true, ou seja, versão do servidor eh a mais atual
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public void deleta(final Aluno aluno) {
